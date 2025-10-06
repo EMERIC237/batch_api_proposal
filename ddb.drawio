@@ -1,0 +1,26 @@
+<mxfile host="app.diagrams.net" modified="2025-10-06T03:29:43.911400Z" version="20.8.16">
+  <diagram name="SQS + DynamoDB Architecture">
+    <mxGraphModel dx="1082" dy="662" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000">
+      <root><mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="S3 manifest (daily run)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="40" y="60" width="220" height="60" as="geometry"/></mxCell>
+<mxCell id="3" value="Producer / SFN" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="300" y="60" width="200" height="60" as="geometry"/></mxCell>
+<mxCell id="4" value="SQS FIFO (put &amp; del)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="540" y="60" width="220" height="60" as="geometry"/></mxCell>
+<mxCell id="5" value="PutWorker Lambda" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="800" y="40" width="220" height="60" as="geometry"/></mxCell>
+<mxCell id="6" value="DelWorker Lambda" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="800" y="120" width="220" height="60" as="geometry"/></mxCell>
+<mxCell id="7" value="DynamoDB: ProcessedDocs (idempotency)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1060" y="40" width="320" height="70" as="geometry"/></mxCell>
+<mxCell id="8" value="DynamoDB: IngestionJobs (progress)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1060" y="120" width="320" height="70" as="geometry"/></mxCell>
+<mxCell id="9" value="DynamoDB: IngestionLocks (lock)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1060" y="200" width="320" height="70" as="geometry"/></mxCell>
+<mxCell id="10" value="Reports S3 (_reports/&lt;jobId&gt;/...)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="800" y="220" width="240" height="60" as="geometry"/></mxCell>
+<mxCell id="11" value="Amazon Kendra (Documents API)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="800" y="300" width="240" height="60" as="geometry"/></mxCell>
+<mxCell id="e1" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e2" edge="1" parent="1" source="3" target="4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e3" edge="1" parent="1" source="4" target="5"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e4" edge="1" parent="1" source="4" target="6"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e5" edge="1" parent="1" source="5" target="7"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e6" edge="1" parent="1" source="5" target="11"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e7" edge="1" parent="1" source="6" target="11"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e8" edge="1" parent="1" source="5" target="10"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

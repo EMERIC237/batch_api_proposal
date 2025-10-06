@@ -1,0 +1,32 @@
+<mxfile host="app.diagrams.net" modified="2025-10-06T03:10:10.272090Z" version="20.8.16">
+  <diagram name="SQS Worker Pool">
+    <mxGraphModel dx="1082" dy="662" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Ingester (Spring)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="40" y="60" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="3" value="S3 Ingestion Bucket" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="280" y="60" width="190" height="60" as="geometry"/></mxCell>
+<mxCell id="4" value="manifest.json (ObjectCreated)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="540" y="60" width="230" height="60" as="geometry"/></mxCell>
+<mxCell id="5" value="Producer Lambda" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="820" y="60" width="200" height="60" as="geometry"/></mxCell>
+<mxCell id="6" value="SQS FIFO: kendra-put.fifo" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1060" y="40" width="230" height="60" as="geometry"/></mxCell>
+<mxCell id="7" value="SQS FIFO: kendra-del.fifo" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1060" y="120" width="230" height="60" as="geometry"/></mxCell>
+<mxCell id="8" value="PutWorker Lambda (2–4)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1320" y="40" width="230" height="60" as="geometry"/></mxCell>
+<mxCell id="9" value="DelWorker Lambda (4–8)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1320" y="120" width="230" height="60" as="geometry"/></mxCell>
+<mxCell id="10" value="Reports Bucket / _reports/&lt;jobId&gt;/…" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1060" y="220" width="330" height="70" as="geometry"/></mxCell>
+<mxCell id="11" value="Summarizer Lambda → failures.csv + SNS" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1420" y="220" width="330" height="70" as="geometry"/></mxCell>
+<mxCell id="12" value="Amazon Kendra (Documents API)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="1320" y="320" width="260" height="70" as="geometry"/></mxCell>
+<mxCell id="e1" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e2" edge="1" parent="1" source="3" target="4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e3" edge="1" parent="1" source="4" target="5"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e4" edge="1" parent="1" source="5" target="6"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e5" edge="1" parent="1" source="5" target="7"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e6" edge="1" parent="1" source="6" target="8"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e7" edge="1" parent="1" source="7" target="9"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e8" edge="1" parent="1" source="8" target="12"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e9" edge="1" parent="1" source="9" target="12"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e10" edge="1" parent="1" source="8" target="10"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e11" edge="1" parent="1" source="9" target="10"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="e12" edge="1" parent="1" source="10" target="11"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

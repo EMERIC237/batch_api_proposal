@@ -1,0 +1,11 @@
+{
+  "jobId": "phonebook-2025-10-05T12-00Z",
+  "bucket": "YOUR-INGESTION-BUCKET",
+  "prefix": "KendraDocuments/phonebook/2025-10-05/",
+  "reportBucket": "YOUR-REPORTS-BUCKET",
+  "batches": [
+    {
+      "key": "KendraDocuments/phonebook/2025-10-05/batches/batch_0001.json"
+    }
+  ]
+}

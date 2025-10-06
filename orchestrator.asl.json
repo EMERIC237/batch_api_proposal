@@ -1,0 +1,85 @@
+{
+  "Comment": "Kendra Documents API Orchestrator",
+  "StartAt": "LoadManifest",
+  "States": {
+    "LoadManifest": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "FunctionName": "${LoadManifestLambdaArn}",
+        "Payload.$": "$"
+      },
+      "Next": "ListBatches"
+    },
+    "ListBatches": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "FunctionName": "${ListBatchesLambdaArn}",
+        "Payload.$": "$"
+      },
+      "Next": "ProcessMap"
+    },
+    "ProcessMap": {
+      "Type": "Map",
+      "ItemsPath": "$.batches",
+      "MaxConcurrency": 3,
+      "Parameters": {
+        "jobId.$": "$.jobId",
+        "bucket.$": "$.bucket",
+        "reportBucket.$": "$.reportBucket",
+        "batch.$": "$$.Map.Item.Value"
+      },
+      "Iterator": {
+        "StartAt": "ProcessBatch",
+        "States": {
+          "ProcessBatch": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "OutputPath": "$.Payload",
+            "Parameters": {
+              "FunctionName": "${ProcessBatchLambdaArn}",
+              "Payload.$": "$"
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "Lambda.ServiceException",
+                  "Lambda.AWSLambdaException",
+                  "Lambda.SdkClientException",
+                  "ThrottlingException"
+                ],
+                "IntervalSeconds": 2,
+                "MaxAttempts": 6,
+                "BackoffRate": 2.0
+              }
+            ],
+            "End": true
+          }
+        }
+      },
+      "Next": "AggregateFailures"
+    },
+    "AggregateFailures": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "FunctionName": "${AggregateFailuresLambdaArn}",
+        "Payload.$": "$"
+      },
+      "Next": "Notify"
+    },
+    "Notify": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:sns:publish",
+      "Parameters": {
+        "TopicArn": "${SnsTopicArn}",
+        "Message.$": "States.JsonToString($)"
+      },
+      "End": true
+    }
+  }
+}

@@ -1,0 +1,13 @@
+<mxfile host="app.diagrams.net" modified="2025-10-06T03:38:41.680197Z" version="20.8.16">
+  <diagram name="DynamoDB Pitch (One Pager)">
+    <mxGraphModel dx="1082" dy="662" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900">
+      <root><mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="t" value="Why add DynamoDB to Kendra Ingestion?" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;fontSize=28;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="20" width="1520" height="80" as="geometry"/></mxCell>
+<mxCell id="c1" value="&lt;b&gt;The Problem Today&lt;/b&gt;&lt;br/&gt;• Bursty pushes → Kendra throttling&lt;br/&gt;• Retries &amp; duplicates waste cost&lt;br/&gt;• No memory: re-ingest unchanged docs&lt;br/&gt;• Hard to know when a run is truly done" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;fontSize=16;" vertex="1" parent="1"><mxGeometry x="40" y="120" width="740" height="300" as="geometry"/></mxCell>
+<mxCell id="c2" value="&lt;b&gt;What DynamoDB Adds&lt;/b&gt;&lt;br/&gt;1) &lt;b&gt;Idempotency ledger&lt;/b&gt;: store VersionId/ETag/sha256 per DocumentId → &lt;i&gt;skip unchanged&lt;/i&gt;&lt;br/&gt;2) &lt;b&gt;Job progress&lt;/b&gt;: expected vs processed → reliable completion &amp; alerts&lt;br/&gt;3) &lt;b&gt;Lock&lt;/b&gt;: prevent double-runs for the same jobId" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;fontSize=16;" vertex="1" parent="1"><mxGeometry x="820" y="120" width="740" height="300" as="geometry"/></mxCell>
+<mxCell id="c3" value="&lt;b&gt;Business Impact&lt;/b&gt;&lt;br/&gt;• Fewer Kendra calls → lower cost&lt;br/&gt;• Faster, predictable daily SLAs&lt;br/&gt;• Clear failure reports &amp; audits&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Cost&lt;/b&gt;&lt;br/&gt;• DDB on-demand: a few $/mo&lt;br/&gt;• Savings from avoided re-ingest &amp; retries outweigh cost" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;fontSize=16;" vertex="1" parent="1"><mxGeometry x="40" y="440" width="740" height="300" as="geometry"/></mxCell>
+<mxCell id="c4" value="&lt;b&gt;Implementation Plan&lt;/b&gt;&lt;br/&gt;• Create 3 tables: ProcessedDocs, IngestionJobs, IngestionLocks&lt;br/&gt;• PutWorker checks VersionId/ETag → skip unchanged; upsert on success&lt;br/&gt;• Add job counters &amp; summarizer (optional)&lt;br/&gt;• Roll out behind a flag; measure savings" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;fontSize=16;" vertex="1" parent="1"><mxGeometry x="820" y="440" width="740" height="300" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
