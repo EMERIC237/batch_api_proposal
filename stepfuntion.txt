@@ -1,0 +1,43 @@
+Slide-ready bullets: why this SFN solution is better
+
+Operational control & reliability
+
+Deterministic pacing: Map.MaxConcurrency keeps requests within Kendra limits—no throttle storms.
+
+Built-in retries/backoff & catch: Throttles and transient errors are handled declaratively (no ad-hoc code).
+
+Idempotent daily runs: AcquireLock(jobId) prevents duplicate executions from double-triggering.
+
+Clear failure accounting: Every FailedDocument is merged into one failures.csv (plus optional errors.json).
+
+End-to-end audit trail: SFN execution history shows inputs, outputs, and retries per state.
+
+Cost & performance
+
+No “waiting inside Lambda”: pacing uses Wait/Retry states (pay per transition), not long-lived Lambdas.
+
+Skip busywork (optional): with DDB “ProcessedDocs”, unchanged docs are skipped → fewer Kendra calls and shorter runs.
+
+Right-sized concurrency: small, controlled parallelism improves throughput without breaching quotas.
+
+Simplicity & maintainability
+
+No recursion / self-invocation: a single, readable workflow replaces chained Lambdas.
+
+Less glue code: Kendra is called via AWS SDK integration in SFN; Lambdas focus only on packing docs and aggregation.
+
+Explicit deletes path: PUT and DELETE are separate branches with their own limits and retries.
+
+Easy to extend: add SQS later for even smoother, large-volume backpressure without touching the orchestration.
+
+Observability & ops
+
+One summary notification: SNS publishes {jobId, totalFailures, reportKey} at the end.
+
+Fast root-cause: per-state inputs/outputs make on-call debugging minutes, not hours.
+
+Safety rails: global Catch ensures the lock is always released and a report is always produced.
+
+Quick talk-track (60–90 seconds)
+
+“We’re not trying to beat Kendra’s limits—we’re enforcing them. Step Functions caps concurrency and handles retries/backoff so Kendra sees a smooth, predictable stream. We remove recursive Lambdas and waiting code; pacing is done with Wait/Retry states (cheap). Every failure is captured in one CSV, and a DynamoDB lock prevents duplicate runs. The result is a controlled, auditable pipeline that’s cheaper to run, easier to operate, and simple to extend—e.g., if volume grows, we can drop in SQS as a data-plane buffer without touching the workflow.”

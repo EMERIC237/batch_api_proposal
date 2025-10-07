@@ -1,0 +1,71 @@
+Why SQS (data-plane) is the right choice here
+
+Backpressure & smoothing: SQS buffers big spikes from the ingester; workers drain at a steady, capped rate that respects Kendra quotas (≤10 docs/req, ≤50 MB batch, ≤5 MB/doc).
+
+Bounded throughput you can prove: Event-source mapping + reserved concurrency = a hard upper bound on Kendra calls (even 1-at-a-time if you want).
+
+Durability & at-least-once: Messages persist across AZs; Lambda failures/redeploys don’t lose work.
+
+Poison message isolation: After N attempts, bad payloads go to DLQ; the rest of the job keeps moving.
+
+Ordering where needed: FIFO + MessageGroupId keeps per-shard order (e.g., same doc or tenant) while still processing multiple shards in parallel.
+
+Built-in dedup: MessageDeduplicationId collapses duplicates from retried events.
+
+Partial success handling: Partial batch response lets the worker ack only succeeded items—no re-processing the good ones.
+
+Clear ops signals: Queue depth, age of oldest message, DLQ depth = simple, objective health metrics.
+
+Loose coupling: You can deploy/roll Producer and Workers independently; the queue is your contract.
+
+Practical implementation notes (put these in small callouts)
+
+Producer Lambda (triggered by manifest.json):
+
+Pairs *.json + *.json.metadata.json.
+
+Packs ≤10 docs / ≤50 MB per message to the put FIFO.
+
+Chunks delete IDs in ≤10 per message to the delete FIFO.
+
+PutWorker Lambda:
+
+Loads content + metadata, builds Kendra documents, calls BatchPutDocument.
+
+On FailedDocuments, write CSV part to s3://…/_reports/<jobId>/put/part-*.csv.
+
+(Optional) DynamoDB ProcessedDocs: skip unchanged (VersionId/ETag) and upsert on success.
+
+DelWorker Lambda:
+
+Calls BatchDeleteDocument in chunks; writes CSV part to …/delete/part-*.csv.
+
+Summarizer (optional):
+
+Merges parts → …/_reports/<jobId>/failures.csv.
+
+Sends SNS: {jobId, failures, reportKey}.
+
+Queue settings:
+
+Visibility timeout > max worker runtime (e.g., 5–10× average).
+
+Redrive policy maxReceiveCount: 5–6.
+
+Server-side encryption enabled (SSE-SQS or CMK if required).
+
+Security:
+
+Least-privilege IAM (S3 get/list/put where needed; Kendra batch APIs; SQS perms; optional DDB).
+
+SSE on S3 buckets; parameterize with environment vars/SSM.
+
+“Why not Lambda → Lambda?”
+
+No durable buffer or backpressure (bursts become throttle storms).
+
+You must hand-roll ordering, dedup, retries, and DLQ logic.
+
+Hard to cap global throughput into Kendra; easy to overwhelm the API.
+
+Observability is weaker: no simple “how far behind are we?” metric.

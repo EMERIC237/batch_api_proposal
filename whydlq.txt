@@ -1,0 +1,58 @@
+One-screen summary to paste on your diagram
+
+Main queues (work):
+
+kendra-put.fifo, kendra-del.fifo
+
+MessageGroupId: "put-<shard>" / "del-<shard>" (3–6 shards)
+
+MessageDeduplicationId: SHA-256(jobId+payloadDigest)
+
+Event source mapping → Lambda: batchSize: 2–5, batchWindow: 1–2s, partial-batch response enabled
+
+Reserved concurrency: PutWorker 2–4, DelWorker 4–8
+
+Backoff on ThrottlingException (exp backoff, cap ~5s)
+
+Dead-letter queues (quarantine):
+
+kendra-put-dlq.fifo, kendra-del-dlq.fifo
+
+Redrive policy: maxReceiveCount: 5–6
+
+Alarm: DLQ depth > 0 for N minutes
+
+Why FIFO: per-entity ordering + built-in dedup → fewer Kendra calls, correct semantics (put/delete), easier ops.
+
+Why DLQ: isolate poison messages; keep the conveyor belt moving; simple place to triage failures.
+
+(Optional) Terraform snippets you can drop in
+# Work queues (FIFO)
+resource "aws_sqs_queue" "put" {
+  name                        = "kendra-put.fifo"
+  fifo_queue                  = true
+  content_based_deduplication = false
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.put_dlq.arn
+    maxReceiveCount     = 6
+  })
+}
+
+resource "aws_sqs_queue" "put_dlq" {
+  name       = "kendra-put-dlq.fifo"
+  fifo_queue = true
+}
+
+# Event source mapping → PutWorker
+resource "aws_lambda_event_source_mapping" "put_es" {
+  event_source_arn                    = aws_sqs_queue.put.arn
+  function_name                       = aws_lambda_function.put_worker.arn
+  batch_size                          = 3
+  maximum_batching_window_in_seconds  = 2
+  function_response_types             = ["ReportBatchItemFailures"] # partial acks
+}
+
+
+If your manager asks “can’t we just use a Standard queue?” your crisp answer:
+
+“We can, but then we lose ordering and built-in dedup. With puts and deletes for the same document, that risks reordering and duplicate Kendra calls. FIFO + DLQ gives us the conveyor belt we need: in-order per doc, dedup for retries, and a quarantine lane for poison messages.”
