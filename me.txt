@@ -1,0 +1,28 @@
+Awesome Emeric 2025:
+- Assisted and helped with some P1 and other deployment issues.
+Implemented the migration of our Terraform infrastructure, including EKS, to a newer updated version. Helping the team to comply to the company requirements 
+
+- Helped in the effort of the team to adopt and use code/ai assistance by providing tricks, sharing learning from experience participating in an effort to improve the developer efficiency 
+
+- Improve our code coverage for at least 3 of our repositories moving them from 60% to 85-90 %
+ - Assisted the team in an effort to recruit the perfect candidate for our team scanning resumes, writing questions, doing interviews and providing feedbacks.
+
+-Always proposing redesigning and improving our infrastructure. Designing a lucid chart diagram and easier vue fostering best practices usage within our team
+ 
+- Familiarized with an assisting team to contribute to the code and help others use our search API.  
+- Improve our API used for data ingestion by adding input validation , improving error logging and warnings, thus improving the experience of our api users.
+- Worked closely with our SRE Balaji to improve our application resiliency by providing logs for alerts. guidance on the alerts meaning and ways to remediate situation
+- took leadership on understanding how our AWS infrastructure and code work (after the assistant team that originally worked on the project left), then provided guidance to the rest of the team and try to be the point of reference for our terraform modules
+- completed my AWS soltutions architect, allowing me to improve my expertise anc contribute to my team more in technical aspect
+- for our Go application, I successfully took on the project to learn how to implement automate release tagging and implemented it succesfully, thus putting our team on a path to follow agile best practices and to improve our team efficiency
+- help our team in an effort to move our application to github and update the jules settings
+- in an effort to keep our team compliant, work on our go application to solve and close snyk securtiy code issue, farnm break issue. thus keeping our code secure and compliant
+- Always taking leadership during meeting to lead when the manager, our product owner is missing 
+- always taking leadership to lead by example by expressing my self first when needed during call, thus breaking the cold atmosphere and giving free space to the rest of the team
+- worked closely with our product owners Trina and gourav to provide them good understand of our application/api, hpw it works and how to use it.
+- Improve product owner job by proposing a digestable way to organize and presnet out sprint achievemnt so he can get a clear vision of what our team  did and where we are going
+- during our onboarding to Elasticsearch, assisted the team, by working out the ingestion of go link and features tools and working the the lambda function to ingest the data to Elastic search. this improve our user search experince by at least 20%
+- lead the ingestion part of our data to Elastic search by researching how to integrate and use their API and providing the foundation the rest of the team build on
+ 
+
+
